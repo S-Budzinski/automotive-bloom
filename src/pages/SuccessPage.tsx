@@ -8,8 +8,8 @@ import { useEffect } from "react";
 const SuccessPage = () => {
   // Jeśli masz w CartContext funkcję clearCart() do czyszczenia koszyka,
   // możesz jej tutaj użyć, aby opróżnić koszyk po udanej płatności:
-  // const { clearCart } = useCart();
-  // useEffect(() => { clearCart?.(); }, []);
+ const { clearCart } = useCart();
+  useEffect(() => { clearCart?.(); }, []);
 
   return (
     <div className="min-h-screen bg-background pt-32 flex flex-col">
