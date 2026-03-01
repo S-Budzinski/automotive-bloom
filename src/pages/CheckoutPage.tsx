@@ -6,7 +6,10 @@ import { useCart } from "@/context/CartContext";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import Footer from "@/components/Footer";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 const SHIPPING_COST = 20;
 
 const checkoutSchema = z.object({
@@ -21,9 +24,47 @@ const checkoutSchema = z.object({
 
 type CheckoutForm = z.infer<typeof checkoutSchema>;
 
+const StripeCheckoutForm = ({ grandTotal }: { grandTotal: number }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+    setIsProcessing(true);
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/success`,
+      },
+    });
+    if (error) {
+      setErrorMessage(error.message ?? "Wystąpił błąd");
+    }
+    setIsProcessing(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <PaymentElement />
+      {errorMessage && <div className="text-destructive text-sm">{errorMessage}</div>}
+      <button
+        disabled={!stripe || isProcessing}
+        type="submit"
+        className="w-full py-3 rounded-lg gradient-primary text-primary-foreground font-heading text-sm tracking-widest uppercase hover-glow mt-6"
+      >
+        {isProcessing ? "Przetwarzanie..." : `Zapłać ${grandTotal.toFixed(2)} zł`}
+      </button>
+    </form>
+  );
+};
+
 const CheckoutPage = () => {
-  const { items, totalPrice, removeItem, updateQuantity } = useCart();
+  const { items, totalPrice, removeItem } = useCart();
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [clientSecret, setClientSecret] = useState<string>("");
 
   const {
     register,
@@ -33,11 +74,39 @@ const CheckoutPage = () => {
     resolver: zodResolver(checkoutSchema),
   });
 
-  const onSubmit = (_data: CheckoutForm) => {
-    setFormSubmitted(true);
-  };
-
   const grandTotal = totalPrice + SHIPPING_COST;
+
+  const onSubmit = async (data: CheckoutForm) => {
+    try {
+      const response = await fetch("/api/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          imie: data.name,
+          nazwisko: data.surname,
+          email: data.email,
+          telefon: data.phone,
+          adres: data.address,
+          kod_pocztowy: data.postalCode,
+          miasto: data.city,
+          total: grandTotal,
+          items: items.map(i => ({
+            name: i.product.name,
+            price: i.product.price,
+            quantity: i.quantity,
+            id: i.product.id
+          }))
+        }),
+      });
+      const result = await response.json();
+      if (result.clientSecret) {
+        setClientSecret(result.clientSecret);
+        setFormSubmitted(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background pt-24">
@@ -57,7 +126,6 @@ const CheckoutPage = () => {
           <p className="text-center text-muted-foreground">Twój koszyk jest pusty</p>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left - Form */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -107,18 +175,15 @@ const CheckoutPage = () => {
               ) : (
                 <div className="bg-card rounded-lg border border-border p-8 glow-border">
                   <h2 className="font-heading text-lg tracking-wider text-primary mb-4">PŁATNOŚĆ</h2>
-                  <div className="bg-muted rounded-lg p-12 flex items-center justify-center border border-dashed border-border">
-                    <div className="text-center">
-                      <p className="text-muted-foreground mb-2">Stripe Payment Embed</p>
-                      <p className="text-xs text-muted-foreground/60">Tutaj zostanie zintegrowany Stripe</p>
-                      <p className="font-heading text-2xl text-primary glow-text mt-4">{grandTotal.toFixed(2)} zł</p>
-                    </div>
-                  </div>
+                  {clientSecret && (
+                    <Elements stripe={stripePromise} options={{ clientSecret }}>
+                      <StripeCheckoutForm grandTotal={grandTotal} />
+                    </Elements>
+                  )}
                 </div>
               )}
             </motion.div>
 
-            {/* Right - Cart Summary */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
