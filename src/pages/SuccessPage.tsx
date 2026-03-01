@@ -54,7 +54,7 @@ const SuccessPage = () => {
               Wróć na stronę główną <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
-              to="/products"
+              to="/produkty"
               className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-secondary/30 text-foreground border border-border hover:bg-secondary/60 transition-all font-heading text-sm tracking-widest uppercase"
             >
               <ShoppingBag className="w-4 h-4" /> Kontynuuj zakupy
