@@ -62,7 +62,7 @@ export async function sendOrderEmails(details: OrderDetails) {
   await transporter.sendMail({
     from: `"Knevio" <${process.env.EMAIL_USER}>`,
     to: customerEmail,
-    subject: `Potwierdzenie zamówienia #${orderId} - Knevio`,
+    subject: `Potwierdzenie zamówienia #${orderId} - BeemTech`,
     html: `
       <div style="font-family: Arial, sans-serif; color: #333;">
         <h1 style="color: #d4af37;">Dziękujemy za zamówienie!</h1>
@@ -74,7 +74,7 @@ export async function sendOrderEmails(details: OrderDetails) {
         
         <p><strong>Razem: ${totalPLN} zł</strong></p>
         <hr style="border: 1px solid #eee; margin: 20px 0;">
-        <p style="font-size: 12px; color: #888;">Zespół Knevio</p>
+        <p style="font-size: 12px; color: #888;">Zespół BeemTech</p>
       </div>
     `,
   });
