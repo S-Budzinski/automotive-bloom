@@ -3,6 +3,7 @@ import HeroSection from "@/components/HeroSection";
 import ProductCard from "@/components/ProductCard";
 import Footer from "@/components/Footer";
 import { products } from "@/data/products";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const featured = products.filter((p) => p.featured);
@@ -51,12 +52,12 @@ const Index = () => {
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               Odkryj pełną gamę części do Twojego samochodu
             </p>
-            <a
-              href="/produkty"
-              className="inline-block px-8 py-3 rounded-lg gradient-primary text-primary-foreground font-heading text-sm tracking-widest uppercase hover-glow"
-            >
+            <Link
+                to="/produkty"
+                className="inline-block px-8 py-3 rounded-lg gradient-primary text-primary-foreground font-heading text-sm tracking-widest uppercase hover-glow"
+                >
               Wszystkie produkty
-            </a>
+            </Link>
           </motion.div>
         </div>
       </section>
