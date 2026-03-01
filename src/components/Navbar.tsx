@@ -19,7 +19,7 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 glass">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link to="/" className="font-heading text-lg md:text-xl font-bold tracking-wider text-primary glow-text">
-          AUTO<span className="text-foreground">PARTS</span>
+          Beem<span className="text-foreground">Tech</span>
         </Link>
 
         {/* Desktop nav */}

@@ -23,8 +23,8 @@ const HeroSection = () => {
           transition={{ duration: 0.8 }}
         >
           <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold tracking-wider mb-4">
-            <span className="text-primary glow-text">AUTO</span>
-            <span className="text-foreground">PARTS</span>
+            <span className="text-primary glow-text">Beem</span>
+            <span className="text-foreground">Tech</span>
           </h1>
           <div className="cyber-line w-48 mx-auto my-6" />
           <p className="text-lg md:text-xl text-foreground/70 max-w-xl mx-auto mb-8 tracking-wide">

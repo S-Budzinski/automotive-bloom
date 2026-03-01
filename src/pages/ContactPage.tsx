@@ -3,9 +3,9 @@ import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import Footer from "@/components/Footer";
 
 const contactInfo = [
-  { icon: Mail, label: "Email", value: "kontakt@autoparts.pl" },
+  { icon: Mail, label: "Email", value: "kontakt.beemtech@gmail.com" },
   { icon: Phone, label: "Telefon", value: "+48 123 456 789" },
-  { icon: MapPin, label: "Adres", value: "ul. Motoryzacyjna 42, 00-001 Warszawa" },
+  { icon: MapPin, label: "Adres", value: "ul. Szkolna, Rzeszów" },
   { icon: Clock, label: "Godziny otwarcia", value: "Pon-Pt: 8:00-18:00, Sob: 9:00-14:00" },
 ];
 
